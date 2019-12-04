@@ -1,4 +1,4 @@
-package com.example.myitime;
+package com.example.myitime.data;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Icon;

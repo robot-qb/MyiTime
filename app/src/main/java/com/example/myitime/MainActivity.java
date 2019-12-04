@@ -4,17 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.myitime.ui.home.HomeFragment;
+import com.example.myitime.data.MyRecord;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.Placeholder;
-import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -93,7 +90,8 @@ public class MainActivity extends AppCompatActivity {
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent=new Intent(MainActivity.this,CreateActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -112,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    public static MyRecordAdapter abc(){return myRecordAdapter;}
+    public static MyRecordAdapter getMyRecordAdapter(){return myRecordAdapter;}
     public class MyRecordAdapter extends ArrayAdapter<MyRecord> {
         private int resourceId;
         public MyRecordAdapter(@NonNull Context context, int resource, @NonNull List<MyRecord> objects) {

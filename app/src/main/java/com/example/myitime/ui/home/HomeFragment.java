@@ -23,11 +23,8 @@ public class HomeFragment extends Fragment {
     private MainActivity.MyRecordAdapter myRecordAdapter;
     private ListView list_view;
 
-    public HomeFragment(){this.myRecordAdapter=MainActivity.abc();}
-    public HomeFragment(MainActivity.MyRecordAdapter myRecordAdapter){
-        this.myRecordAdapter=myRecordAdapter;
+    public HomeFragment(){this.myRecordAdapter=MainActivity.getMyRecordAdapter();}
 
-    }
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         /*homeViewModel =

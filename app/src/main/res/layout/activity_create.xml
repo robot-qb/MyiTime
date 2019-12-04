@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:leon="http://schemas.android.com/apk/res-auto"
+    tools:context=".CreateActivity"
+    android:orientation="vertical">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBlue">
+
+
+        <ImageButton
+            android:id="@+id/yes_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:scaleType="fitXY"
+            android:background="@color/colorBlue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            leon:srcCompat="@mipmap/ic_launcher_yes" />
+
+        <ImageButton
+            android:id="@+id/return_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="4dp"
+            android:scaleType="fitXY"
+            android:background="@color/colorBlue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            leon:srcCompat="@mipmap/ic_launcher_return" />
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="54dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginStart="70dp"
+                android:layout_marginLeft="70dp"
+                android:layout_marginTop="30dp"
+                android:text="标题" />
+
+            <EditText
+                android:id="@+id/title_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="70dp"
+                android:layout_marginLeft="70dp"
+                android:layout_marginTop="20dp"
+                android:ems="10"
+                android:hint="生日，纪念日，节日，考试..."
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/note_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="70dp"
+                android:layout_marginLeft="70dp"
+                android:layout_marginTop="20dp"
+                android:text="备注" />
+
+            <EditText
+                android:id="@+id/note_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="70dp"
+                android:layout_marginLeft="70dp"
+                android:layout_marginTop="20dp"
+                android:ems="10"
+                android:hint="想说的话，目标，格言..."
+                android:inputType="textPersonName" />
+        </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.leon.lib.settingview.LSettingItem
+
+        android:id="@+id/item_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        leon:leftIcon="@drawable/time"
+        leon:leftText="日期"
+        leon:rightStyle="iconHide">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="160dp"
+                android:layout_marginLeft="160dp"
+                android:layout_marginTop="18dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.leon.lib.settingview.LSettingItem>
+
+    <com.leon.lib.settingview.LSettingItem
+        android:id="@+id/item_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        leon:leftIcon="@drawable/repeat"
+        leon:leftText="重复设置"
+        leon:rightStyle="iconHide">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/repeat_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="160dp"
+                android:layout_marginLeft="160dp"
+                android:layout_marginTop="18dp"
+                android:text="无"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.leon.lib.settingview.LSettingItem>
+
+
+    <com.leon.lib.settingview.LSettingItem
+        android:id="@+id/item_three"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        leon:leftIcon="@drawable/picture"
+        leon:leftText="图片"
+        leon:rightStyle="iconHide"/>
+
+    <com.leon.lib.settingview.LSettingItem
+        android:id="@+id/item_four"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        leon:leftIcon="@drawable/label"
+        leon:leftText="添加标签"
+        leon:rightStyle="iconHide">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/label_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="160dp"
+                android:layout_marginLeft="160dp"
+                android:layout_marginTop="18dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.leon.lib.settingview.LSettingItem>
+
+</LinearLayout>
