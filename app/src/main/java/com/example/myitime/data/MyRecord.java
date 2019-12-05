@@ -1,8 +1,10 @@
 package com.example.myitime.data;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Icon;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 
 public class MyRecord implements Serializable {
@@ -10,11 +12,10 @@ public class MyRecord implements Serializable {
     private String note;
     private String time;
     private String repeat;
-    private Bitmap bitmap;
+    private byte[] bitmap;
     private String label;
 
-    public MyRecord(String title) {
-        this.title = title;
+    public MyRecord() {
     }
 
     public void setTitle(String title) {
@@ -34,7 +35,9 @@ public class MyRecord implements Serializable {
     }
 
     public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        this.bitmap=baos.toByteArray();
     }
 
     public void setLabel(String label) {
@@ -58,7 +61,7 @@ public class MyRecord implements Serializable {
     }
 
     public Bitmap getBitmap() {
-        return bitmap;
+        return BitmapFactory.decodeByteArray(this.bitmap,0,this.bitmap.length);
     }
 
     public String getLabel() {

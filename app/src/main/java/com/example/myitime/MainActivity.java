@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.myitime.data.MyRecord;
+import com.example.myitime.model.RecordSaver;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.view.LayoutInflater;
@@ -35,18 +36,23 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int ADD_RECORD=900;
+
     private AppBarConfiguration mAppBarConfiguration;
     private ArrayList<MyRecord> myRecords;
+    private RecordSaver recordSaver;
     private static MyRecordAdapter myRecordAdapter;
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        recordSaver.save();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        myRecords= new ArrayList<>();
-        MyRecord myRecord=new MyRecord("123");
-        myRecord.setNote("note");
-        myRecords.add(myRecord);
-        myRecords.add(myRecord);
+
+        recordSaver=new RecordSaver(this);
+        myRecords=recordSaver.load();
         myRecordAdapter=new MyRecordAdapter(this,R.layout.linearlayout,myRecords);
 
         super.onCreate(savedInstanceState);
@@ -91,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(MainActivity.this,CreateActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,ADD_RECORD);
             }
         });
     }
@@ -108,6 +114,20 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case ADD_RECORD:
+                if(resultCode==RESULT_OK){
+                    MyRecord myRecord=(MyRecord) data.getSerializableExtra("new_record");
+                    myRecords.add(myRecord);
+                    myRecordAdapter.notifyDataSetChanged();
+                }
+                break;
+        }
     }
 
     public static MyRecordAdapter getMyRecordAdapter(){return myRecordAdapter;}

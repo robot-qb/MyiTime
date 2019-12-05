@@ -7,8 +7,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class LabelSaver {
-    Context context;
-    ArrayList<String> labels=new ArrayList<String>();
+    private Context context;
+    private ArrayList<String> labels=new ArrayList<String>();
 
     public LabelSaver(Context context) {
         this.context = context;
@@ -16,7 +16,7 @@ public class LabelSaver {
     public void save(){
         try{
 
-            ObjectOutputStream outputStream = new ObjectOutputStream(context.openFileOutput("Serializable.txt", Context.MODE_PRIVATE));
+            ObjectOutputStream outputStream = new ObjectOutputStream(context.openFileOutput("Serializable_label.txt", Context.MODE_PRIVATE));
             outputStream.writeObject(labels);
             outputStream.close();
         }catch(Exception e){
@@ -26,7 +26,7 @@ public class LabelSaver {
     }
     public ArrayList<String> load(){
         try{
-            ObjectInputStream inputStream = new ObjectInputStream(context.openFileInput("Serializable.txt"));
+            ObjectInputStream inputStream = new ObjectInputStream(context.openFileInput("Serializable_label.txt"));
             labels = (ArrayList<String>) inputStream.readObject();
             inputStream.close();
 

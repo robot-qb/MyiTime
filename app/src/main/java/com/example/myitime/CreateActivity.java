@@ -11,6 +11,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,8 +29,10 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.example.myitime.data.MyRecord;
 import com.example.myitime.model.LabelSaver;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.leon.lib.settingview.LSettingItem;
@@ -41,11 +44,13 @@ import java.util.Calendar;
 import cn.lankton.flowlayout.FlowLayout;
 
 public class CreateActivity extends AppCompatActivity {
-    String text;
+    private String text;
+    private MyRecord myRecord;
 
     public static final int IMAGE_REQUEST_CODE=900;
     public static final int RESIZE_REQUEST_CODE=901;
     private ImageButton yes_button,return_button;
+    private EditText title_edit,note_edit;
     private LSettingItem item_one,item_two,item_three,item_four;
     private TextView time_text,repeat_text,label_text;
     private ConstraintLayout constraintLayout;
@@ -75,7 +80,7 @@ public class CreateActivity extends AppCompatActivity {
 
         }
 
-
+        myRecord=new MyRecord();
         //设置背景图片的linearLayout
         constraintLayout=findViewById(R.id.constraintLayout);
 
@@ -91,24 +96,15 @@ public class CreateActivity extends AppCompatActivity {
             labels.add("一二三四五六七八");
         }
 
-        return_button=findViewById(R.id.return_button);
-        yes_button=findViewById(R.id.yes_button);
-        return_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CreateActivity.this.finish();
-            }
-        });
-        yes_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
         item_one=findViewById(R.id.item_one);
         item_two=findViewById(R.id.item_two);
         item_three=findViewById(R.id.item_three);
         item_four=findViewById(R.id.item_four);
+
+        title_edit=findViewById(R.id.title_edit);
+        note_edit=findViewById(R.id.note_edit);
+
         time_text=findViewById(R.id.time_text);
         repeat_text=findViewById(R.id.repeat_text);
         label_text=findViewById(R.id.label_text);
@@ -160,6 +156,7 @@ public class CreateActivity extends AppCompatActivity {
                         })
                         .create();
                 alertDialog3.show();
+                myRecord.setRepeat(repeat_text.getText().toString());
 
             }
         });
@@ -277,6 +274,38 @@ public class CreateActivity extends AppCompatActivity {
                         })
                         .create()
                         .show();
+                myRecord.setLabel(label_text.getText().toString());
+
+
+            }
+        });
+
+        return_button=findViewById(R.id.return_button);
+        yes_button=findViewById(R.id.yes_button);
+        return_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CreateActivity.this.finish();
+            }
+        });
+        yes_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if("".equals(title_edit.getText().toString().trim()))
+                    Toast.makeText(CreateActivity.this,"标题不能为空",Toast.LENGTH_SHORT).show();
+                else{
+                    myRecord.setTitle(title_edit.getText().toString());
+                    myRecord.setNote(note_edit.getText().toString());
+
+                    Resources res=getResources();
+                    Bitmap bmp=BitmapFactory.decodeResource(res, R.drawable.label);
+                    myRecord.setBitmap(bmp);
+
+                    Intent intent=new Intent();
+                    intent.putExtra("new_record",myRecord);
+                    setResult(RESULT_OK,intent);
+                    CreateActivity.this.finish();
+                }
 
 
             }
@@ -289,6 +318,7 @@ public class CreateActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 time_text.setText(year+"年"+(monthOfYear+1)+"月"+dayOfMonth+"日");
+                myRecord.setTime(time_text.getText().toString());
                 showTimeDialog();
 
             }
@@ -302,6 +332,7 @@ public class CreateActivity extends AppCompatActivity {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 time_text.setText(time_text.getText().toString()+"  "+hourOfDay+":"+minute);
+                myRecord.setTime(time_text.getText().toString());
             }
         },calendar.get(Calendar.HOUR)+8,calendar.get(Calendar.MINUTE),false);
         timePickerDialog.show();
