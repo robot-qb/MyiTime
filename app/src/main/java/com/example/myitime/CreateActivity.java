@@ -80,7 +80,6 @@ public class CreateActivity extends AppCompatActivity {
 
         }
 
-        myRecord=new MyRecord();
         //设置背景图片的linearLayout
         constraintLayout=findViewById(R.id.constraintLayout);
 
@@ -156,7 +155,7 @@ public class CreateActivity extends AppCompatActivity {
                         })
                         .create();
                 alertDialog3.show();
-                myRecord.setRepeat(repeat_text.getText().toString());
+
 
             }
         });
@@ -274,7 +273,6 @@ public class CreateActivity extends AppCompatActivity {
                         })
                         .create()
                         .show();
-                myRecord.setLabel(label_text.getText().toString());
 
 
             }
@@ -294,15 +292,19 @@ public class CreateActivity extends AppCompatActivity {
                 if("".equals(title_edit.getText().toString().trim()))
                     Toast.makeText(CreateActivity.this,"标题不能为空",Toast.LENGTH_SHORT).show();
                 else{
+                    myRecord=new MyRecord();
                     myRecord.setTitle(title_edit.getText().toString());
                     myRecord.setNote(note_edit.getText().toString());
+                    myRecord.setTime(time_text.getText().toString());
+                    myRecord.setRepeat(repeat_text.getText().toString());
+                    myRecord.setLabel(label_text.getText().toString());
 
                     Resources res=getResources();
                     Bitmap bmp=BitmapFactory.decodeResource(res, R.drawable.label);
                     myRecord.setBitmap(bmp);
 
                     Intent intent=new Intent();
-                    intent.putExtra("new_record",myRecord);
+                    intent.putExtra("record",myRecord);
                     setResult(RESULT_OK,intent);
                     CreateActivity.this.finish();
                 }
@@ -311,6 +313,18 @@ public class CreateActivity extends AppCompatActivity {
             }
         });
 
+
+
+        if((myRecord=(MyRecord) getIntent().getSerializableExtra("record"))!=null){
+            title_edit.setText(myRecord.getTitle());
+            note_edit.setText(myRecord.getNote());
+            time_text.setText(myRecord.getTime());
+            repeat_text.setText(myRecord.getRepeat());
+            label_text.setText(myRecord.getLabel());
+            Drawable drawable=new BitmapDrawable(myRecord.getBitmap());
+            constraintLayout.setBackground(drawable);
+        }
+
     }
     public void showDateDialog(){
         Calendar calendar=Calendar.getInstance();
@@ -318,7 +332,6 @@ public class CreateActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 time_text.setText(year+"年"+(monthOfYear+1)+"月"+dayOfMonth+"日");
-                myRecord.setTime(time_text.getText().toString());
                 showTimeDialog();
 
             }
@@ -332,7 +345,6 @@ public class CreateActivity extends AppCompatActivity {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 time_text.setText(time_text.getText().toString()+"  "+hourOfDay+":"+minute);
-                myRecord.setTime(time_text.getText().toString());
             }
         },calendar.get(Calendar.HOUR)+8,calendar.get(Calendar.MINUTE),false);
         timePickerDialog.show();

@@ -2,17 +2,23 @@ package com.example.myitime;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import com.example.myitime.data.MyRecord;
 import com.example.myitime.model.RecordSaver;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+
 import android.view.LayoutInflater;
-import android.view.View;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -24,11 +30,18 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 
 import android.view.Menu;
+
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -37,11 +50,15 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     public static final int ADD_RECORD=900;
+    public static final int CLICK=901;
+    public static final int EDIT=902;
 
     private AppBarConfiguration mAppBarConfiguration;
-    private ArrayList<MyRecord> myRecords;
+    public static ArrayList<MyRecord> myRecords;
     private RecordSaver recordSaver;
     private static MyRecordAdapter myRecordAdapter;
+
+
 
     @Override
     protected void onDestroy() {
@@ -61,9 +78,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+
         /*FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent,ADD_RECORD);
             }
         });
+
+
     }
 
     @Override
@@ -116,17 +137,21 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case ADD_RECORD:
-                if(resultCode==RESULT_OK){
-                    MyRecord myRecord=(MyRecord) data.getSerializableExtra("new_record");
+                if(resultCode==RESULT_OK) {
+                    MyRecord myRecord = (MyRecord) data.getSerializableExtra("record");
                     myRecords.add(myRecord);
                     myRecordAdapter.notifyDataSetChanged();
                 }
                 break;
+
         }
     }
 
@@ -167,4 +192,40 @@ public class MainActivity extends AppCompatActivity {
             return item;
         }
     }
+
+    /*public class MyPageAdapter extends PagerAdapter {
+
+        @Override
+        public int getCount() {
+            // TODO Auto-generated method stub
+            return imgList.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object obj) {
+            // TODO Auto-generated method stub
+            return view == obj;
+        }
+
+        /**
+         * 实例化视图内容（创建要显示的内容）
+         */
+       /* @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            // TODO Auto-generated method stub
+            container.addView(imgList.get(position));
+            return imgList.get(position);
+        }
+
+        /**
+         * 销毁视图内容
+         */
+       /* @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            // TODO Auto-generated method stub
+            container.removeView((View) object);
+        }
+    }
+    */
 }
+
