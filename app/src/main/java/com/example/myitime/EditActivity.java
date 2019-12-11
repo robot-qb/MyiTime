@@ -99,6 +99,8 @@ public class EditActivity extends AppCompatActivity {
                     edit_time_text.setText(myRecord.getTime());
 
 
+                    
+
                 }
         }
     }
