@@ -3,7 +3,9 @@ package com.example.myitime;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.example.myitime.data.MyRecord;
@@ -18,6 +20,8 @@ import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -163,22 +167,25 @@ public class MainActivity extends AppCompatActivity {
             this.resourceId=resource;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             LayoutInflater mInflater = LayoutInflater.from(this.getContext());
             View item=mInflater.inflate(this.resourceId,null);
 
-            ImageView picture=item.findViewById(R.id.picture);
+            //ImageView picture=item.findViewById(R.id.picture);
+            ConstraintLayout constraint_iamge=item.findViewById(R.id.constraint_image);
+            TextView daojishi=item.findViewById(R.id.daojishi);
             TextView title_text_view=item.findViewById(R.id.title_text_view);
             TextView time_text_view=item.findViewById(R.id.time_text_view);
             TextView note_text_view=item.findViewById(R.id.note_text_view);
 
             MyRecord myRecord=(MyRecord)this.getItem(position);
             if(null==myRecord.getBitmap())
-                picture.setImageResource(R.drawable.image);
+                constraint_iamge.setBackgroundResource(R.drawable.image);
             else
-                picture.setImageBitmap(myRecord.getBitmap());
+                constraint_iamge.setBackground(new BitmapDrawable(myRecord.getBitmap()));
             title_text_view.setText(myRecord.getTitle());
             if(null==myRecord.getTime())
                 time_text_view.setText("");

@@ -61,6 +61,10 @@ public class EditActivity extends AppCompatActivity {
         fanhui_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra("record", myRecord);
+                intent.putExtra("position", position);
+                setResult(RESULT_OK, intent);
                 EditActivity.this.finish();
             }
         });
@@ -90,14 +94,11 @@ public class EditActivity extends AppCompatActivity {
         switch (requestCode){
             case EDIT:
                 if(resultCode==RESULT_OK) {
-                    MyRecord myRecord = (MyRecord)data.getSerializableExtra("record");
+                    myRecord = (MyRecord)data.getSerializableExtra("record");
                     edit_title_text.setText(myRecord.getTitle());
                     edit_time_text.setText(myRecord.getTime());
 
-                    Intent intent = new Intent();
-                    intent.putExtra("record", myRecord);
-                    intent.putExtra("position", position);
-                    setResult(RESULT_OK, intent);
+
                 }
         }
     }

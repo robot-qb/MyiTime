@@ -20,8 +20,10 @@ import com.example.myitime.EditActivity;
 import com.example.myitime.MainActivity;
 import com.example.myitime.R;
 import com.example.myitime.data.MyRecord;
+import com.example.myitime.model.NestedListView;
 
 import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_FIRST_USER;
 import static android.app.Activity.RESULT_OK;
 import static com.example.myitime.MainActivity.CLICK;
 
@@ -30,7 +32,7 @@ public class HomeFragment extends Fragment {
     //private HomeViewModel homeViewModel;
 
     private MainActivity.MyRecordAdapter myRecordAdapter;
-    private ListView list_view;
+    private NestedListView list_view;
 
     public HomeFragment(){this.myRecordAdapter=MainActivity.getMyRecordAdapter();}
 
@@ -70,6 +72,7 @@ public class HomeFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case CLICK:
+
                 if(resultCode==RESULT_CANCELED){
                     int position=data.getIntExtra("position",0);
                     MainActivity.myRecords.remove(position);

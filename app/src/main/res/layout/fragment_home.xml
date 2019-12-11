@@ -25,6 +25,21 @@
                 android:layout_height="fill_parent">
             </ImageSwitcher>
 
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/viewGroup"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="30dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+                </LinearLayout>
+            </RelativeLayout>
+
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -33,7 +48,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <ListView
+        <com.example.myitime.model.NestedListView
             android:id="@+id/list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
