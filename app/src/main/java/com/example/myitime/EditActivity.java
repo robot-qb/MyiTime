@@ -1,5 +1,6 @@
 package com.example.myitime;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
@@ -11,6 +12,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -20,6 +23,10 @@ import com.example.myitime.data.MyRecord;
 import static com.example.myitime.MainActivity.EDIT;
 
 public class EditActivity extends AppCompatActivity {
+
+    private static final int COMPLETED = 0;
+    private TimeThread timeThread;
+    private Handler handler;
 
     private ConstraintLayout constraint_layout;
     private ImageButton fanhui_button,delete_button,edit_button;
@@ -61,6 +68,7 @@ public class EditActivity extends AppCompatActivity {
         fanhui_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                timeThread.stopThread();
                 Intent intent = new Intent();
                 intent.putExtra("record", myRecord);
                 intent.putExtra("position", position);
@@ -85,7 +93,17 @@ public class EditActivity extends AppCompatActivity {
                 startActivityForResult(intent,EDIT);
             }
         });
-
+        timeThread=new TimeThread();
+        timeThread.start();
+        handler=new Handler(){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                if(msg.what==COMPLETED){
+                    edit_time2_text.setText(myRecord.getTimeRemaining());
+                }
+            }
+        };
     }
 
     @Override
@@ -97,11 +115,33 @@ public class EditActivity extends AppCompatActivity {
                     myRecord = (MyRecord)data.getSerializableExtra("record");
                     edit_title_text.setText(myRecord.getTitle());
                     edit_time_text.setText(myRecord.getTime());
-
-
-                    
-
                 }
+        }
+    }
+
+    private class TimeThread extends Thread{
+        private Boolean beAlive=false;
+        public void run(){
+            beAlive=true;
+            while (beAlive){
+                try{
+                    Thread.sleep(1000);
+                    Message msg = new Message();
+                    msg.what = COMPLETED;
+                    handler.sendMessage(msg);
+                }catch(InterruptedException e){e.printStackTrace();}
+            }
+        }
+        public void stopThread(){
+            beAlive=false;
+            while(true){
+                try{
+                    this.join();
+                    break;
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

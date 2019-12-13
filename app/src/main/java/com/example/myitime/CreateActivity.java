@@ -38,8 +38,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.leon.lib.settingview.LSettingItem;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import cn.lankton.flowlayout.FlowLayout;
 
@@ -295,13 +298,27 @@ public class CreateActivity extends AppCompatActivity {
                     myRecord=new MyRecord();
                     myRecord.setTitle(title_edit.getText().toString());
                     myRecord.setNote(note_edit.getText().toString());
-                    myRecord.setTime(time_text.getText().toString());
-                    myRecord.setRepeat(repeat_text.getText().toString());
+                    if(time_text.getText().toString().equals("")){
+
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日  HH:mm:ss");
+                        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+08"));
+                        Date date=new Date(System.currentTimeMillis());
+                        myRecord.setTime(simpleDateFormat.format(date));
+
+                    }else {
+                        myRecord.setTime(time_text.getText().toString()+":00");
+                    }
+                    if(repeat_text.getText().toString().equals("0天"))
+                        myRecord.setRepeat("无");
+                    else
+                        myRecord.setRepeat(repeat_text.getText().toString());
                     myRecord.setLabel(label_text.getText().toString());
 
                     Resources res=getResources();
                     Bitmap bmp=BitmapFactory.decodeResource(res, R.drawable.label);
                     myRecord.setBitmap(bmp);
+
+
 
                     Intent intent=new Intent();
                     intent.putExtra("record",myRecord);

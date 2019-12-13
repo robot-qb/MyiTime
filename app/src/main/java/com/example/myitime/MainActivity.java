@@ -15,6 +15,8 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 
 
@@ -48,14 +50,20 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LogRecord;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int ADD_RECORD=900;
     public static final int CLICK=901;
     public static final int EDIT=902;
+
+    private static final int COMPLETED = 0;
+    private TimeThread timeThread;
+    private Handler handler;
 
     private AppBarConfiguration mAppBarConfiguration;
     public static ArrayList<MyRecord> myRecords;
@@ -64,10 +72,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         recordSaver.save();
+        timeThread.stopThread();
+
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +121,17 @@ public class MainActivity extends AppCompatActivity {
 
        // FragmentManager fragmentManager=getSupportFragmentManager();
        // fragmentManager.beginTransaction().replace(R.id.nav_home, new HomeFragment(myRecordAdapter)).commit();
-
-
+        timeThread=new TimeThread();
+        timeThread.start();
+        handler=new Handler(){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                if(msg.what==COMPLETED){
+                    myRecordAdapter.notifyDataSetChanged();
+                }
+            }
+        };
 
 
         FloatingActionButton add_button=findViewById(R.id.fab);
@@ -160,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static MyRecordAdapter getMyRecordAdapter(){return myRecordAdapter;}
+
     public class MyRecordAdapter extends ArrayAdapter<MyRecord> {
         private int resourceId;
         public MyRecordAdapter(@NonNull Context context, int resource, @NonNull List<MyRecord> objects) {
@@ -186,20 +207,43 @@ public class MainActivity extends AppCompatActivity {
                 constraint_iamge.setBackgroundResource(R.drawable.image);
             else
                 constraint_iamge.setBackground(new BitmapDrawable(myRecord.getBitmap()));
+
+            daojishi.setText(myRecord.getTimeRemaining());
+
             title_text_view.setText(myRecord.getTitle());
-            if(null==myRecord.getTime())
-                time_text_view.setText("");
-            else
-                time_text_view.setText(myRecord.getTime());
-            if(null==myRecord.getNote())
-                note_text_view.setText("");
-            else
-                note_text_view.setText(myRecord.getNote());
+
+            time_text_view.setText(myRecord.getTime());
+
+            note_text_view.setText(myRecord.getNote());
 
             return item;
         }
     }
-
+    private class TimeThread extends Thread{
+        private Boolean beAlive=false;
+        public void run(){
+            beAlive=true;
+            while (beAlive){
+                try{
+                    Thread.sleep(1000);
+                    Message msg = new Message();
+                    msg.what = COMPLETED;
+                    handler.sendMessage(msg);
+                }catch(InterruptedException e){e.printStackTrace();}
+            }
+        }
+        public void stopThread(){
+            beAlive=false;
+            while(true){
+                try{
+                    this.join();
+                    break;
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     /*public class MyPageAdapter extends PagerAdapter {
 
         @Override

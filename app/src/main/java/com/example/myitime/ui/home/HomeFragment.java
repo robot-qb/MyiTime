@@ -34,6 +34,7 @@ public class HomeFragment extends Fragment {
     private MainActivity.MyRecordAdapter myRecordAdapter;
     private NestedListView list_view;
 
+
     public HomeFragment(){this.myRecordAdapter=MainActivity.getMyRecordAdapter();}
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -64,6 +65,7 @@ public class HomeFragment extends Fragment {
 
             }
         });
+
         return root;
     }
 
