@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraint_picture"
+    android:layout_width="match_parent"
+    android:layout_height="192dp">
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:gravity="center_horizontal"
+        android:text="TextView"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="167dp" />
+
+    <TextView
+        android:id="@+id/text_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"
+        android:text="TextView"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/text_title"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="167dp" />
+
+    <TextView
+        android:id="@+id/text_remaining"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/text_time"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="167dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+

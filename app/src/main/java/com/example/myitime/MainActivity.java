@@ -61,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int CLICK=901;
     public static final int EDIT=902;
 
-    private static final int COMPLETED = 0;
-    private TimeThread timeThread;
-    private Handler handler;
 
     private AppBarConfiguration mAppBarConfiguration;
     public static ArrayList<MyRecord> myRecords;
@@ -77,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         recordSaver.save();
-        timeThread.stopThread();
 
     }
     @Override
@@ -121,17 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
        // FragmentManager fragmentManager=getSupportFragmentManager();
        // fragmentManager.beginTransaction().replace(R.id.nav_home, new HomeFragment(myRecordAdapter)).commit();
-        timeThread=new TimeThread();
-        timeThread.start();
-        handler=new Handler(){
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                super.handleMessage(msg);
-                if(msg.what==COMPLETED){
-                    myRecordAdapter.notifyDataSetChanged();
-                }
-            }
-        };
+
 
 
         FloatingActionButton add_button=findViewById(R.id.fab);
@@ -219,31 +205,7 @@ public class MainActivity extends AppCompatActivity {
             return item;
         }
     }
-    private class TimeThread extends Thread{
-        private Boolean beAlive=false;
-        public void run(){
-            beAlive=true;
-            while (beAlive){
-                try{
-                    Thread.sleep(1000);
-                    Message msg = new Message();
-                    msg.what = COMPLETED;
-                    handler.sendMessage(msg);
-                }catch(InterruptedException e){e.printStackTrace();}
-            }
-        }
-        public void stopThread(){
-            beAlive=false;
-            while(true){
-                try{
-                    this.join();
-                    break;
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+
     /*public class MyPageAdapter extends PagerAdapter {
 
         @Override

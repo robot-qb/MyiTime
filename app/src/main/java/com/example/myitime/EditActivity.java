@@ -64,6 +64,7 @@ public class EditActivity extends AppCompatActivity {
         constraint_layout.setBackground(drawable);
         edit_title_text.setText(myRecord.getTitle());
         edit_time_text.setText(myRecord.getTime());
+        edit_time2_text.setText(myRecord.getTimeRemainFull());
 
         fanhui_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +101,7 @@ public class EditActivity extends AppCompatActivity {
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
                 if(msg.what==COMPLETED){
-                    edit_time2_text.setText(myRecord.getTimeRemaining());
+                    edit_time2_text.setText(myRecord.getTimeRemainFull());
                 }
             }
         };
