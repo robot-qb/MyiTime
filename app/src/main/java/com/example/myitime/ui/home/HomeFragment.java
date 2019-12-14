@@ -43,7 +43,8 @@ public class HomeFragment extends Fragment {
     //private HomeViewModel homeViewModel;
 
     private TimeThread timeThread;
-    private static final int COMPLETED = 0;
+    private static final int COMPLETED = 200;
+    private static final int CANCEL_VIEW =201;
     private Handler handler;
 
     private MainActivity.MyRecordAdapter myRecordAdapter;
@@ -51,7 +52,7 @@ public class HomeFragment extends Fragment {
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
     private ArrayList<View> mList;
-    private int pos;
+
 
 
     public HomeFragment(){this.myRecordAdapter=MainActivity.getMyRecordAdapter();}
@@ -93,15 +94,18 @@ public class HomeFragment extends Fragment {
                         if(myRecords.size()>myViewPagerAdapter.getCount()){
                             myViewPagerAdapter.addList();
                             myViewPagerAdapter.notifyDataSetChanged();
-                        }else{
-                            myViewPagerAdapter.delList(pos);
-                            myViewPagerAdapter.notifyDataSetChanged();
                         }
                     }
+
                     for(int i=0;i<myRecords.size();i++){
                         TextView textView=myViewPagerAdapter.getmLists().get(i).findViewById(R.id.text_remaining);
                         textView.setText(myRecords.get(i).getTimeRemainFull());
                     }
+                }else if(msg.what==CANCEL_VIEW){
+                    init();
+                    myViewPagerAdapter=new MyViewPagerAdapter(mList);
+                    viewPager.setAdapter(myViewPagerAdapter);
+
                 }
             }
         };
@@ -153,9 +157,13 @@ public class HomeFragment extends Fragment {
             case CLICK:
 
                 if(resultCode==RESULT_CANCELED){
-                    pos=data.getIntExtra("position",0);
-                    MainActivity.myRecords.remove(pos);
+                    int position=data.getIntExtra("position",0);
+                    MainActivity.myRecords.remove(position);
                     myRecordAdapter.notifyDataSetChanged();
+                    Message message=new Message();
+                    message.what=CANCEL_VIEW;
+                    message.arg1=position;
+                    handler.sendMessage(message);
 
                 }
                 if(resultCode==RESULT_OK){
@@ -221,9 +229,7 @@ public class HomeFragment extends Fragment {
             text_remaining.setText(myRecords.get(myRecords.size()-1).getTimeRemainFull());
             mLists.add(view);
         }
-        public void delList(int pos){
-            mLists.remove(pos);
-        }
+
     }
 
     private class TimeThread extends Thread{

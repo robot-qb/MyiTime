@@ -326,7 +326,7 @@ public class CreateActivity extends AppCompatActivity {
                         myRecord.setBitmap(bitmap);
                     }else {
                         Resources res = getResources();
-                        bitmap = BitmapFactory.decodeResource(res, R.drawable.label);
+                        bitmap = BitmapFactory.decodeResource(res, R.drawable.image);
                         myRecord.setBitmap(bitmap);
                     }
 

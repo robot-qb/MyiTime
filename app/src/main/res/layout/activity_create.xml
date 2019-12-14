@@ -59,6 +59,7 @@
                 android:layout_marginStart="70dp"
                 android:layout_marginLeft="70dp"
                 android:layout_marginTop="30dp"
+                android:textColor="@color/black"
                 android:text="标题" />
 
             <EditText
@@ -70,6 +71,7 @@
                 android:layout_marginTop="20dp"
                 android:ems="10"
                 android:hint="生日，纪念日，节日，考试..."
+                android:textColor="@color/black"
                 android:inputType="textPersonName" />
 
             <TextView
@@ -79,6 +81,7 @@
                 android:layout_marginStart="70dp"
                 android:layout_marginLeft="70dp"
                 android:layout_marginTop="20dp"
+                android:textColor="@color/black"
                 android:text="备注" />
 
             <EditText
@@ -90,6 +93,7 @@
                 android:layout_marginTop="20dp"
                 android:ems="10"
                 android:hint="想说的话，目标，格言..."
+                android:textColor="@color/black"
                 android:inputType="textPersonName" />
         </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
