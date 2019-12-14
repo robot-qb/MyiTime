@@ -1,16 +1,23 @@
 package com.example.myitime;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,12 +27,14 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -38,6 +47,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.leon.lib.settingview.LSettingItem;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,8 +61,11 @@ public class CreateActivity extends AppCompatActivity {
     private String text;
     private MyRecord myRecord;
 
-    public static final int IMAGE_REQUEST_CODE=900;
-    public static final int RESIZE_REQUEST_CODE=901;
+    public static final int TAKE_PHOTO = 300;
+    public static final int CHOOSE_PHOTO = 301;
+    private Uri imageUri;
+    private Bitmap bitmap;
+
     private ImageButton yes_button,return_button;
     private EditText title_edit,note_edit;
     private LSettingItem item_one,item_two,item_three,item_four;
@@ -103,6 +117,9 @@ public class CreateActivity extends AppCompatActivity {
         item_two=findViewById(R.id.item_two);
         item_three=findViewById(R.id.item_three);
         item_four=findViewById(R.id.item_four);
+
+        return_button=findViewById(R.id.return_button);
+        yes_button=findViewById(R.id.yes_button);
 
         title_edit=findViewById(R.id.title_edit);
         note_edit=findViewById(R.id.note_edit);
@@ -167,17 +184,7 @@ public class CreateActivity extends AppCompatActivity {
             @Override
             public void click() {
                 AlertDialog.Builder alertDialog=new AlertDialog.Builder(CreateActivity.this);
-                View view=View.inflate(CreateActivity.this,R.layout.create_select_photo_layout,null);
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(
-                                Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(intent,IMAGE_REQUEST_CODE);
-
-                    }
-                });
+                View view=photoDialog();
                 alertDialog
                         .setTitle("选择图片")
                         .setView(view)
@@ -190,6 +197,8 @@ public class CreateActivity extends AppCompatActivity {
                         .create()
                         .show();
             }
+
+
         });
         item_four.setmOnLSettingItemClick(new LSettingItem.OnLSettingItemClick() {
             @Override
@@ -281,8 +290,7 @@ public class CreateActivity extends AppCompatActivity {
             }
         });
 
-        return_button=findViewById(R.id.return_button);
-        yes_button=findViewById(R.id.yes_button);
+
         return_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -314,9 +322,13 @@ public class CreateActivity extends AppCompatActivity {
                         myRecord.setRepeat(repeat_text.getText().toString());
                     myRecord.setLabel(label_text.getText().toString());
 
-                    Resources res=getResources();
-                    Bitmap bmp=BitmapFactory.decodeResource(res, R.drawable.label);
-                    myRecord.setBitmap(bmp);
+                    if(bitmap!=null){
+                        myRecord.setBitmap(bitmap);
+                    }else {
+                        Resources res = getResources();
+                        bitmap = BitmapFactory.decodeResource(res, R.drawable.label);
+                        myRecord.setBitmap(bitmap);
+                    }
 
 
 
@@ -367,55 +379,161 @@ public class CreateActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-    //获取图片路径
+    //以下是选择图片的代码
+    public View photoDialog(){
+        View view=View.inflate(CreateActivity.this,R.layout.create_select_photo_layout,null);
+        ImageView select_photo,take_photo;
+        select_photo=view.findViewById(R.id.select_photo);
+        take_photo=view.findViewById(R.id.take_photo);
+        select_photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ContextCompat.checkSelfPermission(CreateActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(CreateActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                }else{
+                    openAlbum();
+                }
+            }
+        });
+        take_photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //创建File对象，用于存储拍照后的图片
+                File outputImage = new File(getExternalCacheDir(), "output_image.jpg");
+                try {
+                    if (outputImage.exists()) {
+                        outputImage.delete();
+                    }
+                    outputImage.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //android 7.0版本以下的系统，直接Uri.fromFile取得真实文件路径；7.0及以上版本的系统，使用fileprovider封装过的Uri再提供出去。
+                if (Build.VERSION.SDK_INT >= 24) {
+                    imageUri = FileProvider.getUriForFile(CreateActivity.this, "com.example.myitime.fileprovider", outputImage);
+                } else {
+                    imageUri = Uri.fromFile(outputImage);
+                }
+                //启动相机程序
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                startActivityForResult(intent, TAKE_PHOTO);   //启动Intent活动，拍完照会有结果返回到onActivityResult()方法中。
+
+            }
+        });
+        return view;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case 1:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    openAlbum();
+                }else{
+                    Toast.makeText(this, "You denied the permision.", Toast.LENGTH_LONG).show();
+                }
+                break;
+            default:
+        }
+    }
+
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, CHOOSE_PHOTO);//打开相册
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        } else {
-            switch (requestCode) {
-                case IMAGE_REQUEST_CODE:
-                    resizeImage(data.getData());
-                    break;
-
-                case RESIZE_REQUEST_CODE:
-                    if (data != null) {
-                        showResizeImage(data);
-                    }
-                    break;
-            }
-        }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-    //这里增加裁剪
-    public void resizeImage(Uri uri) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        //裁剪的大小
-        intent.putExtra("outputX", 150);
-        intent.putExtra("outputY", 150);
-        intent.putExtra("return-data", true);
-        //设置返回码
-        startActivityForResult(intent, RESIZE_REQUEST_CODE);
-    }
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    private void showResizeImage(Intent data) {
-        Bundle extras = data.getExtras();
-        if (extras != null) {
-            Bitmap photo = extras.getParcelable("data");
-            //裁剪之后设置保存图片的路径
+        switch (requestCode) {
+            case TAKE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    try {
+                        //将拍摄的照片显示出来
+                        bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                        constraintLayout.setBackground(new BitmapDrawable(bitmap));
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
 
-
-
-            Drawable drawable = new BitmapDrawable(photo);
-            constraintLayout.setBackground(drawable);
+                }
+                break;
+            case CHOOSE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    //判断手机系统版本号
+                    if (Build.VERSION.SDK_INT >= 19) {
+                        //4.4及以上系统使用这个方法处理图片
+                        handleImageOnKitKat(data);
+                    } else {
+                        //4.4以下系统使用这个方法处理图片
+                        handeleImageBeforeKitKat(data);
+                    }
+                }
+                break;
+            default:
+                break;
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void handleImageOnKitKat(Intent data) {
+//    Toast.makeText(this,"到了handleImageOnKitKat(Intent data)方法了", Toast.LENGTH_LONG).show();
+        String imagePath = null;
+        Uri uri = data.getData();
+        if(DocumentsContract.isDocumentUri(this, uri)){
+            //如果是 document 类型的 Uri，则通过 document id 处理
+            String docId = DocumentsContract.getDocumentId(uri);
+            if("com.android.providers.media.documents".equals(uri.getAuthority())){
+                String id = docId.split(":")[1];//解析出数字格式的 id
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            }else if("com.android.providers.downloads.documents".equals(uri.getAuthority())){
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                imagePath = getImagePath(contentUri, null);
+            }
+        }else if ("content".equalsIgnoreCase(uri.getScheme())){
+            //如果是 content 类型的 uri ， 则使用普通方式处理
+            imagePath = getImagePath(uri, null);
+        }else if("file".equalsIgnoreCase(uri.getScheme())){
+            //如果是 file 类型的 Uri，直接获取图片路径即可
+            imagePath = uri.getPath();
+        }
+        displayImage(imagePath);//显示选中的图片
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private void handeleImageBeforeKitKat(Intent data){
+        Uri uri = data.getData();
+        String imagePath = getImagePath(uri, null);
+        displayImage(imagePath);
+    }
+
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        //通过 Uri 和 selection 来获取真实的图片路径
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if(cursor != null){
+            if(cursor.moveToFirst()){
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+        return path;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private void displayImage(String imagePath) {
+        if(imagePath != null){
+            bitmap = BitmapFactory.decodeFile(imagePath);
+            constraintLayout.setBackground(new BitmapDrawable(bitmap));
+        }else{
+            Toast.makeText(this,"failed to get image", Toast.LENGTH_LONG).show();
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
