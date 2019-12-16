@@ -68,8 +68,10 @@ public class MyRecord implements Serializable {
                 df.setTimeZone(TimeZone.getTimeZone("GMT+08"));
                 Date now = new Date(System.currentTimeMillis());
                 Date pre = df.parse(time);
-                if(now.getTime()>pre.getTime())
-                    return (year+1)+time.substring(4);
+                if(now.getTime()>pre.getTime()) {
+                    time=(year + 1) + time.substring(4);
+                    return time;
+                }
                 else
                     return time;
             }catch (Exception e){}
@@ -87,13 +89,19 @@ public class MyRecord implements Serializable {
                 Date now = new Date(System.currentTimeMillis());
                 Date pre = df.parse(time);
                 if(now.getTime()>pre.getTime()){
-                    if(time.substring(6,7).equals("月"))
-                        return year+"年"+(month+1)+time.substring(6);
+                    if(time.substring(6,7).equals("月")) {
+                        time=year + "年" + (month + 1) + time.substring(6);
+                        return time;
+                    }
                     else{
-                        if(month<12)
-                            return year+"年"+(month+1)+time.substring(7);
-                        else
-                            return (year+1)+"年"+1+time.substring(7);
+                        if(month<12) {
+                            time = year + "年" + (month + 1) + time.substring(7);
+                            return time;
+                        }
+                        else {
+                            time = (year + 1) + "年" + 1 + time.substring(7);
+                            return time;
+                        }
                     }
                 } else
                     return time;

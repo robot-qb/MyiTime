@@ -189,16 +189,14 @@ public class MainActivity extends AppCompatActivity {
             TextView note_text_view=item.findViewById(R.id.note_text_view);
 
             MyRecord myRecord=(MyRecord)this.getItem(position);
-            if(null==myRecord.getBitmap())
-                constraint_iamge.setBackgroundResource(R.drawable.image);
-            else
-                constraint_iamge.setBackground(new BitmapDrawable(myRecord.getBitmap()));
+
+            constraint_iamge.setBackground(new BitmapDrawable(myRecord.getBitmap()));
+
+            time_text_view.setText(myRecord.getTime());
 
             daojishi.setText(myRecord.getTimeRemaining());
 
             title_text_view.setText(myRecord.getTitle());
-
-            time_text_view.setText(myRecord.getTime());
 
             note_text_view.setText(myRecord.getNote());
 

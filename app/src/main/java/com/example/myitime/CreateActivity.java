@@ -53,6 +53,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 import java.util.TimeZone;
 
 import cn.lankton.flowlayout.FlowLayout;
@@ -326,7 +327,16 @@ public class CreateActivity extends AppCompatActivity {
                         myRecord.setBitmap(bitmap);
                     }else {
                         Resources res = getResources();
-                        bitmap = BitmapFactory.decodeResource(res, R.drawable.image);
+                        Random random = new Random();
+                        int a = random.nextInt(4)+1;
+                        if(a==1)
+                            bitmap = BitmapFactory.decodeResource(res, R.drawable.random1);
+                        else if(a==2)
+                            bitmap = BitmapFactory.decodeResource(res, R.drawable.random2);
+                        else if(a==3)
+                            bitmap = BitmapFactory.decodeResource(res, R.drawable.random3);
+                        else
+                            bitmap = BitmapFactory.decodeResource(res, R.drawable.random4);
                         myRecord.setBitmap(bitmap);
                     }
 
