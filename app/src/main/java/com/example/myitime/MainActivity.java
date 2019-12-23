@@ -120,15 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        FloatingActionButton add_button=findViewById(R.id.fab);
-        add_button.bringToFront();
-        add_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this,CreateActivity.class);
-                startActivityForResult(intent,ADD_RECORD);
-            }
-        });
+
 
 
     }
@@ -150,20 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case ADD_RECORD:
-                if(resultCode==RESULT_OK) {
-                    MyRecord myRecord = (MyRecord) data.getSerializableExtra("record");
-                    myRecords.add(myRecord);
-                    myRecordAdapter.notifyDataSetChanged();
-                }
-                break;
 
-        }
-    }
 
     public static MyRecordAdapter getMyRecordAdapter(){return myRecordAdapter;}
 

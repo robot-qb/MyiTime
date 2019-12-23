@@ -29,12 +29,14 @@ import com.example.myitime.MainActivity;
 import com.example.myitime.R;
 import com.example.myitime.data.MyRecord;
 import com.example.myitime.model.NestedListView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_FIRST_USER;
 import static android.app.Activity.RESULT_OK;
+import static com.example.myitime.MainActivity.ADD_RECORD;
 import static com.example.myitime.MainActivity.CLICK;
 import static com.example.myitime.MainActivity.myRecords;
 
@@ -72,6 +74,17 @@ public class HomeFragment extends Fragment {
                 textView.setText(s);
             }
         });*/
+
+        FloatingActionButton add_button=root.findViewById(R.id.fab);
+        add_button.bringToFront();
+        add_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(),CreateActivity.class);
+                startActivityForResult(intent,ADD_RECORD);
+            }
+        });
+
         list_view=root.findViewById(R.id.list_view);
         viewPager=root.findViewById(R.id.viewPager);
         list_view.setAdapter(myRecordAdapter);
@@ -154,6 +167,13 @@ public class HomeFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
+            case ADD_RECORD:
+                if(resultCode==RESULT_OK) {
+                    MyRecord myRecord = (MyRecord) data.getSerializableExtra("record");
+                    myRecords.add(myRecord);
+                    myRecordAdapter.notifyDataSetChanged();
+                }
+                break;
             case CLICK:
 
                 if(resultCode==RESULT_CANCELED){
