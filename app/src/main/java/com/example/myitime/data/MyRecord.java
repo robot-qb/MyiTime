@@ -19,6 +19,7 @@ public class MyRecord implements Serializable {
     private byte[] bitmap;
     private String label;
 
+
     public MyRecord() {
     }
 
