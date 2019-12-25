@@ -360,6 +360,7 @@ public class CreateActivity extends AppCompatActivity {
             time_text.setText(myRecord.getTime());
             repeat_text.setText(myRecord.getRepeat());
             label_text.setText(myRecord.getLabel());
+            bitmap=myRecord.getBitmap();
             Drawable drawable=new BitmapDrawable(myRecord.getBitmap());
             constraintLayout.setBackground(drawable);
         }
